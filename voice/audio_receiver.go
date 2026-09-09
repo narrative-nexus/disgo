@@ -88,6 +88,11 @@ func (s *defaultAudioReceiver) receive() {
 	}
 
 	packet, err := s.conn.UDP().ReadPacket()
+	// The receiver may be attached before Conn.Open completes. An unopened conn
+	// is not a closed one: idle until the handshake hands over the UDP endpoint.
+	if errors.Is(err, ErrUDPConnNotOpen) {
+		return
+	}
 	if errors.Is(err, net.ErrClosed) {
 		s.Close()
 		return

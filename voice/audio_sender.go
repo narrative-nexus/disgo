@@ -144,6 +144,11 @@ func (s *defaultAudioSender) send() {
 }
 
 func (s *defaultAudioSender) handleErr(err error) {
+	// The provider may be attached before Conn.Open completes. An unopened conn
+	// is not a closed one: idle until the handshake hands over the UDP endpoint.
+	if errors.Is(err, ErrUDPConnNotOpen) {
+		return
+	}
 	if errors.Is(err, net.ErrClosed) || errors.Is(err, ErrGatewayNotConnected) {
 		s.Close()
 		return

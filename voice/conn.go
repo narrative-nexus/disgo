@@ -41,9 +41,13 @@ type (
 		SetSpeaking(ctx context.Context, flags SpeakingFlags) error
 
 		// SetOpusFrameProvider lets you inject your own OpusFrameProvider.
+		// It may be called before Open: the sender idles until the voice
+		// handshake has opened the UDP connection.
 		SetOpusFrameProvider(handler OpusFrameProvider)
 
 		// SetOpusFrameReceiver lets you inject your own OpusFrameReceiver.
+		// It may be called before Open: the receiver idles until the voice
+		// handshake has opened the UDP connection.
 		SetOpusFrameReceiver(handler OpusFrameReceiver)
 
 		// Open opens the voice conn. It will connect to the voice gateway and start the Conn conn after it receives the Gateway events.

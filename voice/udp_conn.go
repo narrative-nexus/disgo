@@ -49,6 +49,12 @@ const (
 // ErrDecryptionFailed is returned when the packet decryption fails.
 var ErrDecryptionFailed = errors.New("decryption failed")
 
+// ErrUDPConnNotOpen is returned when the UDP connection has not been opened yet
+// and a read or write is attempted. A Conn builds its UDPConn eagerly but only
+// opens it once the voice gateway is ready, so this is the state a UDPConn is in
+// before the voice handshake completes.
+var ErrUDPConnNotOpen = errors.New("voice udp conn not open")
+
 var (
 	_ io.Reader      = UDPConn(nil)
 	_ io.ReadCloser  = UDPConn(nil)
@@ -267,6 +273,10 @@ func (u *udpConnImpl) Write(p []byte) (int, error) {
 	conn := u.conn
 	u.connMu.Unlock()
 
+	if conn == nil {
+		return 0, ErrUDPConnNotOpen
+	}
+
 	binary.BigEndian.PutUint16(u.header[2:4], u.sequence)
 	u.sequence++
 
@@ -302,6 +312,10 @@ func (u *udpConnImpl) ReadPacket() (*Packet, error) {
 	u.connMu.Lock()
 	conn := u.conn
 	u.connMu.Unlock()
+
+	if conn == nil {
+		return nil, ErrUDPConnNotOpen
+	}
 
 	for {
 		n, err := conn.Read(u.receiveBuffer)
