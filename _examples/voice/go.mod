@@ -14,7 +14,7 @@ require (
 	github.com/disgoorg/json/v2 v2.0.0 // indirect
 	github.com/disgoorg/omit v1.0.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
-	github.com/klauspost/compress v1.18.6 // indirect
+	github.com/klauspost/compress v1.18.7 // indirect
 	github.com/sasha-s/go-csync v0.0.0-20240107134140-fcbab37b09ad // indirect
 	golang.org/x/crypto v0.53.0 // indirect
 	golang.org/x/sys v0.46.0 // indirect
